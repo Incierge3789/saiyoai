@@ -43,3 +43,10 @@ ganache-config.json
 saiyoai/scraping_results/
 sorted_output.txt
 download_gbizinfo_data.sh
+.DS_Store
+.vscode/
+saiyoai1/gbizinfo/downloads/
+gunicorn
+__pycache__/
+*.pyc
+*.sqlite3
