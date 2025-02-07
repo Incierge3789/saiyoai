@@ -36,7 +36,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['34.146.152.234', 'localhost', '127.0.0.1', 'saiyoai.com', 'www.saiyoai.com', '234.152.146.34.bc.googleusercontent.com', '0.0.0.0']
+ALLOWED_HOSTS = ['34.146.152.234', 'localhost', '127.0.0.1', '0.0.0.0']
 
 # Application definition
 
