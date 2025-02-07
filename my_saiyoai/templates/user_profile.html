@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ユーザープロファイル</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body class="container">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{% url 'my_saiyoai:index' %}">My Saiyoai</a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <!-- ナビゲーションリンク -->
+                <li><a href="{% url 'my_saiyoai:dashboard' %}">ダッシュボード</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header class="header">
+        <h1>{{ user.username }}のプロファイル</h1>
+    </header>
+    <!-- ユーザー情報セクション -->
+    <div class="section">
+        <h2 class="section-title">ユーザー情報</h2>
+        <p>メールアドレス: {{ user.email }}</p>
+        <!-- 他のユーザー情報を表示 -->
+    </div>
+    
+    <!-- 会社情報セクション -->
+    <div class="section">
+        <h2 class="section-title">会社情報</h2>
+        <p>会社名: {{ user.company.name }}</p>
+        <p>会社メール: {{ user.company.email }}</p>
+        <p>会社の電話番号: {{ user.company.phone }}</p>
+        <p>企業文化のURL: <a href="{{ user.company.culture_url }}" target="_blank">{{ user.company.culture_url }}</a></p>
+        <p>求人情報のURL: <a href="{{ user.company.job_url }}" target="_blank">{{ user.company.job_url }}</a></p>
+    </div>
+    <a href="{% url 'my_saiyoai:edit_profile' %}" class="btn btn-outline-primary">プロファイル編集</a>
+
+    <footer class="footer mt-auto py-3 border-top">
+        <div class="container">
+            <span class="text-muted">&copy; 2023 My Saiyoai. All rights reserved.</span>
+        </div>
+    </footer>
+    <!-- チャットボットのアイコンとウィンドウ -->
+    <div id="chatbot-container">
+        <button id="chatbot-toggle">
+            <img src="{% static 'chatbot-icon.png' %}" alt="Chatbot Icon">
+        </button>
+    </div>
+
+    <div id="chatbot-window" class="chatbot-hidden">
+        <div id="chatbot-header">
+            <h5>My Saiyoai Chatbot</h5>
+            <button id="chatbot-close">&times;</button>
+        </div>
+        <div id="chatbot-messages"></div>
+        <div id="chatbot-input-container">
+            <textarea id="chatbot-input" placeholder="質問があればこちらへどうぞ。" rows="1" class="form-control"></textarea>
+            <button id="chatbot-send">送信</button>
+        </div>
+    </div>
+
+    <!-- チャットボットに関するJavaScriptのリンク -->
+    <script src="{% static 'chatbot.js' %}" defer></script>
+</body>
+</html>

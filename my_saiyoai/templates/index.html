@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'styles.css' %}?v=2">
+    <script src="{% static 'chatbot.js' %}" defer></script> <!-- チャットボットのJavaScript -->
+</head>
+<body>
+    <div class="container"> <!-- 新しいコンテナを開始 -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="{% url 'my_saiyoai:index' %}">My Saiyoai</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a href="{% url 'my_saiyoai:dashboard' %}" class="btn btn-outline-primary nav-link">ダッシュボード</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'my_saiyoai:logout' %}" class="btn btn-outline-primary nav-link">ログアウト</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a href="{% url 'my_saiyoai:login' %}" class="btn btn-outline-primary nav-link">ログイン</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'my_saiyoai:register' %}" class="btn btn-outline-primary nav-link">Register</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+
+        <header class="py-3 mb-4 border-bottom">
+            {% if user.is_authenticated %}
+                <h1 class="mt-3 mb-5">ようこそ、{{ user.username }}さん！</h1>
+                <p>あなたのダッシュボードを見るためには<a href="{% url 'my_saiyoai:dashboard' %}">こちら</a>をクリックしてください。</p>
+            {% else %}
+                <h1 class="mt-3 mb-5">Welcome to My Saiyoai! Powered by GPT4</h1>
+                <p>"My Saiyoaiへのご訪問、誠にありがとうございます"</p>
+                <p>"当サービスはGPT4の力を借りて、求人リストを一瞬で格上げする支援を行います。"</p>
+                <p>"採用の成功を確実にするパートナー、それがMy Saiyoaiです。"</p>
+                <p>"さあ、今すぐ登録してあなたの採用活動を劇的に変えてみませんか？"</p>
+            {% endif %}
+        </header>
+
+        <section class="form-section">
+            <h2>求人ページと企業文化ページのURLを入力してください</h2>
+            <form method="post" action="{% url 'my_saiyoai:analyze' %}" class="my-4">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="job_url">求人ページのURL:</label>
+                    <input type="text" id="job_url" name="job_url" class="form-control">
+                    <div class="custom-selection-buttons">
+                        <!-- その他のフォーム要素 -->
+                        <input type="radio" id="job_default" name="job_scrape_method" value="default" class="d-none" checked>
+                        <label class="btn btn-outline-primary selection-button" for="job_default">デフォルト</label>
+
+                        <input type="radio" id="job_doda" name="job_scrape_method" value="doda" class="d-none">
+                        <label class="btn btn-outline-primary selection-button" for="job_doda">Doda</label>
+       
+                        <input type="radio" id="job_entenshoku" name="job_scrape_method" value="entenshoku" class="d-none">
+                        <label class="btn btn-outline-primary selection-button" for="job_entenshoku">エン転職</label>
+
+                        <input type="radio" id="job_indeed" name="job_scrape_method" value="indeed" class="d-none">
+                        <label class="btn btn-outline-primary selection-button" for="job_indeed">Indeed</label>
+
+                        <input type="radio" id="job_mynavi" name="job_scrape_method" value="mynavi" class="d-none">
+                        <label class="btn btn-outline-primary selection-button" for="job_mynavi">マイナビ</label>
+
+                        <input type="radio" id="job_rikunavi" name="job_scrape_method" value="rikunavi" class="d-none">
+                        <label class="btn btn-outline-primary selection-button" for="job_rikunavi">リクナビ</label>
+
+                        <input type="radio" id="job_wantedly" name="job_scrape_method" value="wantedly" class="d-none">
+                        <label class="btn btn-outline-primary selection-button" for="job_wantedly">Wantedly</label>
+                    </div>
+                </div>
+                <!-- その他のフォーム要素 -->
+                <div class="form-group">
+                    <label for="culture_url">企業の文化や理念のページURL:</label>
+                    <input type="text" id="culture_url" name="culture_url" class="form-control">
+                    <div class="custom-selection-buttons">
+                        <input type="radio" id="culture_default" name="culture_scrape_method" value="default" class="d-none" checked>
+                        <label class="btn btn-outline-primary selection-button" for="culture_default">デフォルト</label>
+
+                        <input type="radio" id="culture_wantedly_company" name="culture_scrape_method" value="wantedly_company" class="d-none">
+                        <label class="btn btn-outline-primary selection-button" for="culture_wantedly_company">Wantedly 企業</label>
+
+                        <input type="radio" id="culture_wantedly_story" name="culture_scrape_method" value="wantedly_story" class="d-none">
+                        <label class="btn btn-outline-primary selection-button" for="culture_wantedly_story">Wantedly ストーリー</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="word_limit">文字数制限:</label>
+                    <select id="word_limit" name="word_limit" class="form-control">
+                        <option value="500">500</option>
+                        <option value="1000">1000</option>
+                        <option value="1500">1500</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-outline-primary">改善案を生成</button>
+            </form>
+        </section>
+    </div> <!-- 新しいコンテナの終わり -->
+
+    <footer class="footer mt-auto py-3 border-top">
+        <div class="container">
+            <span class="text-muted">&copy; 2024 My Saiyoai. All rights reserved.</span>
+        </div>
+    </footer>
+
+    <!-- チャットボットのアイコンとウィンドウ -->
+    <div id="chatbot-container">
+        <button id="chatbot-toggle">
+            <img src="{% static 'chatbot-icon.png' %}" alt="Chatbot Icon">
+        </button>
+    </div>
+
+    <div id="chatbot-window" class="chatbot-hidden">
+        <div id="chatbot-header">
+            <h5>saiyoai</h5>
+            <button id="chatbot-close">&times;</button>
+        </div>
+        <div id="chatbot-messages"></div>
+        <div id="chatbot-input-container">
+            <textarea id="chatbot-input" placeholder="どのようにお手伝いできるか、お気軽にお問い合わせください。" rows="1" class="form-control"></textarea>
+            <button id="chatbot-send">送信</button>
+        </div>
+    </div>
+</body>
+</html>

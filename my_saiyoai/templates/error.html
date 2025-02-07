@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>システムエラー - お客様サポート</title>
+    <!-- 必要なスタイルシートやスクリプト -->
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <style>
+        body {
+            font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1170px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 15px;
+        }
+        .error-message {
+            color: #D8000C;
+            background-color: #FFD2D2;
+            padding: 20px;
+            margin: 30px 0;
+            border: 1px solid #D8000C;
+            border-radius: 5px;
+            display: none; /* 最初はエラーメッセージを隠す */
+        }
+        a {
+            color: #0056b3;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>システムエラーが発生しました</h1>
+        <div id="error-message" class="error-message">
+            <!-- デフォルトのエラーメッセージ -->
+            ご利用中のサービスで技術的な問題が発生しております。大変申し訳ございませんが、システムの復旧に努めておりますので、しばらくお待ちいただくようお願い申し上げます。
+            サービス再開までのお問い合わせは、以下の連絡先までご連絡ください。
+        </div>
+        <p>サポートデスク： <a href="mailto:support@saiyoai.com">support@saiyoai.com</a></p>
+        <p>電話番号： 03-1234-5678（平日9:00〜17:00）</p>
+        <!-- メインページへのリンク -->
+        <p>
+            <a href="{% url 'my_saiyoai:index' %}">メインページに戻る</a>
+        </p>
+    </div>
+    <script src="{% static 'errorHandling.js' %}"></script>
+    <script>
+        // URLからエラータイプを取得する
+        const urlParams = new URLSearchParams(window.location.search);
+        const errorType = urlParams.get('error_type');
+
+        // エラータイプが存在する場合、エラーメッセージを表示する
+        if (errorType) {
+            showError(errorType);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>アカウント作成</title>
+    {% load static %}  <!-- この行を追加 -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'styles.css' %}"> <!-- CSSファイルを追加 -->
+</head>
+<body class="container">
+    <header class="py-3 mb-4 border-bottom">
+        <h1 class="mt-3">アカウントを作成する</h1>
+    </header>
+
+    <section class="form-section">
+        <form method="post" class="my-4">
+            {% csrf_token %}
+            <!-- ユーザー情報セクション -->
+            <div class="section">
+                <h2 class="section-title">ユーザー情報</h2>
+                <!-- ユーザー情報のフォームフィールドをここに挿入 -->
+                <div class="form-group">
+                    <label for="id_email">メールアドレス:</label>
+                    {{ user_form.email.label_tag }}
+                    {{ user_form.email }}
+                    <small class="form-text text-muted">{{ user_form.email.help_text }}</small>
+                </div>
+                <div class="form-group">
+                    <label for="id_password1">パスワード:</label>
+                    {{ user_form.password1.label_tag }}
+                    {{ user_form.password1 }}
+                    <small class="form-text text-muted">{{ user_form.password1.help_text }}</small>
+                </div>
+                <div class="form-group">
+                    <label for="id_password2">パスワード確認:</label>
+                    {{ user_form.password2.label_tag }}
+                    {{ user_form.password2 }}
+                    <small class="form-text text-muted">{{ user_form.password2.help_text }}</small>
+                </div>
+            </div>
+
+            <!-- 会社情報セクション -->
+            <div class="section">
+                <h2 class="section-title">会社情報</h2>
+                <!-- 会社情報のフォームフィールドをここに挿入 -->
+                {{ company_form.as_p }}
+            </div>
+
+            <input type="submit" value="アカウントを作成" class="btn btn-outline-primary">
+        </form>
+    </section>
+
+    <p>すでにアカウントをお持ちの方は<a href="{% url 'my_saiyoai:login' %}">こちらからログイン</a></p>
+
+    <footer class="footer mt-auto py-3 border-top">
+        <div class="container">
+            <span class="text-muted">&copy; 2023 My Saiyoai. All rights reserved.</span>
+        </div>
+    </footer>
+</body>
+</html>

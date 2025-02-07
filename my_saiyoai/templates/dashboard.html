@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ダッシュボード</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <script src="{% static 'chatbot.js' %}" defer></script>
+</head>
+<body class="dashboard-page">
+    <!-- デバッグ情報の出力 -->
+    <header>
+        <div class="logo">
+            <a href="{% url 'my_saiyoai:index' %}">MySaiyoai</a>
+        </div>
+        <h1>ダッシュボード</h1>
+        <nav>
+            <ul>
+                <li><a href="{% url 'my_saiyoai:user_profile' %}">プロファイル</a></li>
+                <li><a href="{% url 'my_saiyoai:logout' %}">ログアウト</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <h2>改善提案</h2>
+        <main>
+        <section class="dashboard-container">
+        
+            <!-- 実際の表示内容 -->
+            {% for date, suggestions in suggestions_grouped_by_date.items %}
+                <div class="date-container">
+                    <h2>{{ date }}</h2>
+                    <div class="cards-row">
+                    {% for improvement_suggestion in suggestions %}
+                        <!-- 求人票改善案カード -->
+                        <!-- 求人票改善案カード -->
+                        <div class="card" data-id="{{ improvement_suggestion.id }}" onclick="openModal('modal-job-ticket-{{ improvement_suggestion.id }}')">
+                            <h3 class="card-title">求人票改善案</h3>
+                            <p class="card-text">{{ improvement_suggestion.job_ticket_suggestion|truncatechars:160 }}</p>
+                            <button class="detail-button" onclick="event.stopPropagation(); openModal('modal-job-ticket-{{ improvement_suggestion.id }}')">詳細</button>
+                        </div>
+
+                        <!-- スカウトメール改善案カード -->
+                        <div class="card" data-id="{{ improvement_suggestion.id }}" onclick="openModal('modal-scout-{{ improvement_suggestion.id }}')">
+                            <h3 class="card-title">スカウトメール改善案</h3>
+                            <p class="card-text">{{ improvement_suggestion.scout_text_suggestion|truncatechars:160 }}</p>
+                            <button class="detail-button" onclick="event.stopPropagation(); openModal('modal-scout-{{ improvement_suggestion.id }}')">詳細</button>
+                        </div>
+
+                        <!-- 企業ストーリー改善案カード -->
+                        <div class="card" data-id="{{ improvement_suggestion.id }}" onclick="openModal('modal-story-{{ improvement_suggestion.id }}')">
+                            <h3 class="card-title">企業ストーリー改善案</h3>
+                            <p class="card-text">{{ improvement_suggestion.story_suggestion|truncatechars:160 }}</p>
+                            <button class="detail-button" onclick="event.stopPropagation(); openModal('modal-story-{{ improvement_suggestion.id }}')">詳細</button>
+                        </div>
+                        <!-- モーダルの定義 -->
+                        <!-- 求人票改善案のモーダル -->
+                        <div id="modal-job-ticket-{{ improvement_suggestion.id }}" class="modal">
+                            <div class="modal-content">
+                                <span class="close-modal" onclick="closeModal('modal-job-ticket-{{ improvement_suggestion.id }}')">&times;</span>
+                                <div class="modal-body">
+                                    <!-- 編集フォームの詳細と保存ボタン -->
+                                    <form onsubmit="editSuggestion(event, {{ improvement_suggestion.id }}, 'job-ticket'); return false;">
+                                        <textarea class="textarea" id="job-ticket-text-{{ improvement_suggestion.id }}">{{ improvement_suggestion.job_ticket_suggestion }}</textarea>
+                                        <button type="submit" class="save-button">保存</button>
+                                        <button onclick="deleteSuggestion({{ improvement_suggestion.id }})" class="delete-button">削除</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- スカウトメール改善案のモーダル -->
+                        <div id="modal-scout-{{ improvement_suggestion.id }}" class="modal">
+                            <div class="modal-content">
+                                <span class="close-modal" onclick="closeModal('modal-scout-{{ improvement_suggestion.id }}')">&times;</span>
+                                <div class="modal-body">
+                                    <!-- 編集フォームの詳細と保存ボタン -->
+                                    <form onsubmit="editSuggestion(event, {{ improvement_suggestion.id }}, 'scout-text'); return false;">
+                                        <textarea class="textarea" id="scout-text-text-{{ improvement_suggestion.id }}">{{ improvement_suggestion.scout_text_suggestion }}</textarea>
+                                        <button type="submit">保存</button>
+                                        <button onclick="deleteSuggestion({{ improvement_suggestion.id }})" class="delete-button">削除</button> 
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 企業ストーリー改善案のモーダル -->
+                        <div id="modal-story-{{ improvement_suggestion.id }}" class="modal">
+                            <div class="modal-content">
+                                <span class="close-modal" onclick="closeModal('modal-story-{{ improvement_suggestion.id }}')">&times;</span>
+                                <div class="modal-body">
+                                    <!-- 編集フォームの詳細と保存ボタン -->
+                                    <form onsubmit="editSuggestion(event, {{ improvement_suggestion.id }}, 'story'); return false;">
+                                        <textarea class="textarea" id="story-text-{{ improvement_suggestion.id }}">{{ improvement_suggestion.story_suggestion }}</textarea>
+                                        <button type="submit">保存</button>
+                                        <button onclick="deleteSuggestion({{ improvement_suggestion.id }})" class="delete-button">削除</button> 
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </section>
+    </main>
+
+
+    <footer>
+        <p>&copy; 2024 My Saiyoai. All rights reserved.</p>
+        <a href="#">お問い合わせ</a>
+    </footer>
+
+    <script src="{% static 'dashboard.js' %}"></script>
+    <script>
+        function openModal(modalId) {
+            var modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = "block";
+            } else {
+                console.error("Modal with ID '" + modalId + "' not found");
+            }
+        }
+    </script>
+
+    <div id="chatbot-container">
+        <button id="chatbot-toggle">
+            <img src="{% static 'chatbot-icon.png' %}" alt="Chatbot Icon">
+        </button>
+    </div>
+
+    <div id="chatbot-window" class="chatbot-hidden">
+        <div id="chatbot-header">
+            <h5>saiyoai</h5>
+            <button id="chatbot-close">&times;</button>
+        </div>
+        <div id="chatbot-messages"></div>
+        <div id="chatbot-input-container">
+            <textarea id="chatbot-input" placeholder="どのようにお手伝いできるか、お気軽にお問い合わせください。" rows="1" class="form-control"></textarea>
+            <button id="chatbot-send">送信</button>
+        </div>
+    </div>
+</body>
+
+</html>

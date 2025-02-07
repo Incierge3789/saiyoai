@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ material.title }}</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <!-- アップルのデザイン哲学を反映したシンプルなスタイリング -->
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+        .container {
+            background-color: #f0f0f5;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .question-box, .answer-box {
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+        .question-box {
+            border-color: #007bff;
+        }
+        .answer-box {
+            border-color: #28a745;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+    <h1>{{ material.title }}</h1>
+    <p>{{ material.description }}</p>
+    
+        <!-- 動画を囲むコンテナ -->
+        <div class="video-container">
+          <video width="640" height="360" controls> <!-- 幅はCSSで設定されるので、ここでは削除または調整してください -->
+            <source src="{{ material.file.url }}" type="video/mp4">
+            お使いのブラウザは動画タグをサポートしていません。
+          </video>
+        </div>
+
+
+        <!-- 質問フォーム -->
+        <div class="question-box">
+          <form action="{% url 'my_saiyoai:material_detail' material.id %}" method="post">
+            {% csrf_token %}
+            <label for="question">あなたの質問:</label>
+            <input type="text" id="question" name="question" required>
+            <button type="submit">質問する</button>
+          </form>
+        </div>
+
+        <!-- AIによる回答を表示 -->
+        {% if question and answer %}
+        <div class="question-box">
+            <p><strong>質問:</strong> {{ question }}</p>
+        </div>
+        <div class="answer-box">
+            <p><strong>回答:</strong> {{ answer }}</p>
+        </div>
+        {% endif %}
+    </div>
+    <!-- ここから会話履歴を表示するセクション -->
+    <div class="conversation-history">
+      <h2>会話履歴</h2>
+      {% for conversation in conversations %}
+        <div class="conversation">
+          <p><strong>質問:</strong> {{ conversation.question }}</p>
+          <p><strong>回答:</strong> {{ conversation.answer }}</p>
+        </div>
+      {% empty %}
+        <p>まだ会話履歴がありません。</p>
+      {% endfor %}
+    </div>
+    <!-- ここまで会話履歴を表示するセクション -->
+</body>
+</html>
